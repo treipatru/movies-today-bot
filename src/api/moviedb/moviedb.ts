@@ -1,11 +1,11 @@
 const MOVIEDB_API_URL = 'https://api.themoviedb.org/3';
 
-type FetchMoviedbApiParams = {
+interface FetchMoviedbApiParams {
 	endpoint: string;
 	method: 'GET';
 	options?: RequestInit;
 	searchParams: URLSearchParams;
-};
+}
 
 /**
  * Endpoint wrapper for the Movie Database API.
