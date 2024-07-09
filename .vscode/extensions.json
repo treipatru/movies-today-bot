@@ -2,6 +2,6 @@
 	"recommendations": [
 		"dprint.dprint",
 		"EditorConfig.EditorConfig",
-		"streetsidesoftware.code-spell-checker",
+		"streetsidesoftware.code-spell-checker"
 	]
 }
