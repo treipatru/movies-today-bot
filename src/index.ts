@@ -1,11 +1,15 @@
 import Bree from 'bree';
-import path from 'path';
+import * as path from 'node:path';
+import * as process from 'node:process';
 import { getDirPath } from './utils/get-dir-path.js';
 
-const __dirname = getDirPath(import.meta.url);
+if (process.env.NODE_ENV === 'development') {
+	console.log("Can't run scheduler in dev mode. Exiting...");
+	process.exit(0);
+}
 
+const __dirname = getDirPath(import.meta.url);
 const bree = new Bree({
-	root: path.resolve(__dirname, 'jobs'),
 	jobs: [
 		{
 			name: 'daily-movie',
@@ -13,6 +17,15 @@ const bree = new Bree({
 			interval: '1d',
 		},
 	],
+
+	/**
+	 * Always set the root option when doing any type of
+	 * compiling with bree. This just makes it clearer where
+	 * bree should resolve the jobs folder from. By default it
+	 * resolves to the jobs folder relative to where the program
+	 * is executed.
+	 */
+	root: path.resolve(__dirname, 'jobs'),
 });
 
 console.log('Starting Bree...');

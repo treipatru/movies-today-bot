@@ -6,7 +6,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "tsc --build",
 		"start": "node --env-file=.env.prod dist/index.js",
-		"dev": "NODE_ENV=development tsx watch --env-file=.env.dev src/index.ts"
+		"dev": "NODE_ENV=development tsx watch --env-file=.env.dev src/jobs/daily-movie.ts"
 	},
 	"type": "module",
 	"keywords": [
