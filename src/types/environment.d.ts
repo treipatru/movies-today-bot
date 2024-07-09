@@ -4,6 +4,7 @@ declare global {
 			MASTODON_ACCESS_TOKEN: string;
 			MASTODON_BASE_URL: string;
 			MOVIEDB_API_KEY: string;
+			MOVIEDB_API_URL: string;
 		}
 	}
 }
