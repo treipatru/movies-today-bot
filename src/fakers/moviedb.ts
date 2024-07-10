@@ -37,48 +37,42 @@ export function generateMovie({
 	return {
 		adult: false, // Adult is always false
 		backdrop_path: '/backdrop-example.jpg',
-		genre_ids: faker
-			.helpers
-			.multiple(() => {
-				return faker.number.int({ min: 1, max: 1000 });
-			}),
-		id: faker
-			.number
-			.int({ min: 1, max: 99999 }),
-		original_language: faker
-			.helpers
-			.enumValue(Language),
-		original_title: faker
-			.lorem
-			.words({ min: 1, max: 5 }),
-		overview: faker
-			.lorem
-			.paragraph({ min: 1, max: 3 }),
-		popularity: faker
-			.number
-			.float({
-				max: maxPopularity || 9999.999,
-				min: minPopularity || 0.001,
-				multipleOf: 0.001,
-			}),
+		genre_ids: faker.helpers.multiple(() => {
+			return faker.number.int({ min: 1, max: 1000 });
+		}),
+		id: faker.number.int({
+			min: 1,
+			max: 99999,
+		}),
+		original_language: faker.helpers.enumValue(Language),
+		original_title: faker.lorem.words({
+			min: 1,
+			max: 5,
+		}),
+		overview: faker.lorem.paragraph({
+			min: 1,
+			max: 3,
+		}),
+		popularity: faker.number.float({
+			max: maxPopularity || 9999.999,
+			min: minPopularity || 0.001,
+			multipleOf: 0.001,
+		}),
 		poster_path: hasPosterPath ? '/poster-example.jpg' : null,
 		release_date: getFormattedDate(releasedOn),
-		title: faker
-			.lorem
-			.words({ min: 1, max: 5 }),
+		title: faker.lorem.words({
+			min: 1,
+			max: 5,
+		}),
 		video: false, // Video is always false
-		vote_average: faker
-			.number
-			.float({
-				max: 10,
-				min: 1,
-				multipleOf: 0.001,
-			}),
-		vote_count: faker
-			.number
-			.int({
-				max: 9999999,
-				min: 1,
-			}),
+		vote_average: faker.number.float({
+			max: 10,
+			min: 1,
+			multipleOf: 0.001,
+		}),
+		vote_count: faker.number.int({
+			max: 9999999,
+			min: 1,
+		}),
 	};
 }
