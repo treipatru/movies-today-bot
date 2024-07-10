@@ -1,3 +1,6 @@
+import { MediaAttachment } from '@/types/mastodon.js';
+import { Movie } from '@/types/moviedb.js';
+import { appLogger } from '@/utils/logger.js';
 import process from 'node:process';
 import { getAdjacentDayInYear } from '../actions/movie/get-adjacent-year-date.js';
 import { getBestMovieByDate } from '../actions/movie/get-best-movie.js';
@@ -11,17 +14,34 @@ import {
 } from '../api/mastodon.js';
 import { getDiscoverMovie } from '../api/moviedb.js';
 
+appLogger.info({
+	message: 'Starting daily movie job.',
+	service: 'system',
+});
+
 /**
  * Avoid posting multiple times in a day by checking the timeline.
  */
-const posts = await getTimeline
-	.home
-	.list({ limit: 1 });
-const hasPosted = hasPostedToday(posts);
+try {
+	const posts = await getTimeline
+		.home
+		.list({ limit: 1 });
+	const hasPosted = hasPostedToday(posts);
 
-if (hasPosted) {
-	console.log('Already posted today.');
-	process.exit(0);
+	if (hasPosted) {
+		appLogger.info({
+			message: 'Already posted today, aborting.',
+			service: 'system',
+		});
+		process.exit(0);
+	}
+} catch (error) {
+	appLogger.error({
+		error,
+		message: 'Failed to check timeline on Mastodon.',
+		service: 'mastodon',
+	});
+	process.exit(1);
 }
 
 /**
@@ -29,71 +49,122 @@ if (hasPosted) {
  * get the best movie for today.
  */
 
-const releaseYears = getYearsRange();
-const moviesFromThisDate = await Promise
-	.all(
-		releaseYears
-			.map(async releaseYear => {
-				/**
-				 * The Movie Database API does not have a method to request movies
-				 * released on a particular day so we have to specify a range.
-				 * If we're interested in movies released on a specific day, we need
-				 * to specify the day before and after.
-				 */
-				const dayBefore = getAdjacentDayInYear({
-					date: new Date(),
-					direction: 'previous',
-					year: releaseYear,
-				});
-				const dayAfter = getAdjacentDayInYear({
-					date: new Date(),
-					direction: 'next',
-					year: releaseYear,
-				});
+let bestMovie: Movie | null = null;
+let allMovies: Movie[] = [];
 
-				/**
-				 * Get an array of movies released on today's month and day for the
-				 * current release year.
-				 */
-				const discoverResponse = await getDiscoverMovie({
-					'primary_release_date.gte': dayBefore,
-					'primary_release_date.lte': dayAfter,
-					'sort_by': 'popularity.desc',
-					'with_runtime.gte': '60',
-					'without_genres': '99', // Exclude documentaries
-				});
+try {
+	const releaseYears = getYearsRange();
+	const moviesFromThisDate = await Promise
+		.all(
+			releaseYears
+				.map(async releaseYear => {
+					/**
+					 * The Movie Database API does not have a method to request movies
+					 * released on a particular day so we have to specify a range.
+					 * If we're interested in movies released on a specific day, we need
+					 * to specify the day before and after.
+					 */
+					const dayBefore = getAdjacentDayInYear({
+						date: new Date(),
+						direction: 'previous',
+						year: releaseYear,
+					});
+					const dayAfter = getAdjacentDayInYear({
+						date: new Date(),
+						direction: 'next',
+						year: releaseYear,
+					});
 
-				return discoverResponse.results;
-			}),
-	);
+					/**
+					 * Get an array of movies released on today's month and day for the
+					 * current release year.
+					 */
+					const discoverResponse = await getDiscoverMovie({
+						'primary_release_date.gte': dayBefore,
+						'primary_release_date.lte': dayAfter,
+						'sort_by': 'popularity.desc',
+						'with_runtime.gte': '60',
+						'without_genres': '99', // Exclude documentaries
+					});
 
-const bestMovie = getBestMovieByDate(
-	moviesFromThisDate.flat(),
+					return discoverResponse.results;
+				}),
+		);
+	allMovies = moviesFromThisDate.flat();
+} catch (error) {
+	appLogger.error({
+		error,
+		message: 'Failed to get best movie from Movie Database.',
+		service: 'tmdb',
+	});
+	process.exit(1);
+}
+
+bestMovie = getBestMovieByDate(
+	allMovies.flat(),
 	new Date(),
 );
 
 /**
- * Create a status to post on Mastodon
+ * Create a status (text) to post on Mastodon.
  */
 const status = getMovieInfo(bestMovie);
 
 /**
- * Attach a movie poster to the status. The bestMovie will always have a poster.
+ * Fetch the movie poster from the Movie Database API.
  */
-const remotePoster = await fetch(`https://image.tmdb.org/t/p/original/${bestMovie.poster_path}`);
-const statusAttachment = await createMedia({
-	description: `${bestMovie.title} movie poster`,
-	file: await remotePoster.blob(),
-});
+let statusAttachment: MediaAttachment | null = null;
+let remotePoster: Response;
+
+try {
+	remotePoster = await fetch(`https://image.tmdb.org/t/p/original/${bestMovie.poster_path}`);
+} catch (error) {
+	appLogger.error({
+		error,
+		message: 'Failed to fetch movie poster.',
+		service: 'tmdb',
+	});
+	process.exit(1);
+}
+
+/**
+ * Create the media attachment for the status.
+ */
+try {
+	statusAttachment = await createMedia({
+		description: `${bestMovie.title} movie poster`,
+		file: await remotePoster.blob(),
+	});
+} catch (error) {
+	appLogger.error({
+		error,
+		message: 'Failed to create media attachment.',
+		service: 'mastodon',
+	});
+	process.exit(1);
+}
 
 /**
  * Post to Mastodon.
  */
-await createStatus({
-	status,
-	mediaIds: statusAttachment ? [statusAttachment.id] : undefined,
-	visibility: 'public',
-});
+try {
+	await createStatus({
+		status,
+		mediaIds: statusAttachment ? [statusAttachment.id] : undefined,
+		visibility: 'public',
+	});
 
-console.log('Posted movie: ', bestMovie.title);
+	appLogger.info({
+		message: `Posted movie status - ${bestMovie.title} (${bestMovie.release_date})`,
+		service: 'mastodon',
+	});
+} catch (error) {
+	appLogger.error({
+		error,
+		message: 'Failed to post movie status',
+		service: 'mastodon',
+	});
+	process.exit(1);
+}
+
 process.exit(0);

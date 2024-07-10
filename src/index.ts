@@ -1,10 +1,14 @@
+import { getDirPath } from '@/utils/get-dir-path.js';
+import { appLogger } from '@/utils/logger.js';
 import Bree from 'bree';
 import * as path from 'node:path';
 import * as process from 'node:process';
-import { getDirPath } from './utils/get-dir-path.js';
 
 if (process.env.NODE_ENV === 'development') {
-	console.log("Can't run scheduler in dev mode. Exiting...");
+	appLogger.warn({
+		message: "Can't run scheduler in dev mode. Exiting...",
+		service: 'system',
+	});
 	process.exit(0);
 }
 
@@ -18,6 +22,8 @@ const bree = new Bree({
 		},
 	],
 
+	logger: appLogger,
+
 	/**
 	 * Always set the root option when doing any type of
 	 * compiling with bree. This just makes it clearer where
@@ -28,5 +34,9 @@ const bree = new Bree({
 	root: path.resolve(__dirname, 'jobs'),
 });
 
-console.log('Starting Bree...');
+appLogger.info({
+	message: 'Starting job scheduler',
+	service: 'system',
+});
+
 await bree.start();
