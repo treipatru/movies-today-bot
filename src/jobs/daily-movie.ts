@@ -52,61 +52,52 @@ try {
 let bestMovie: Movie | null = null;
 let allMovies: Movie[] = [];
 
-try {
-	const releaseYears = getYearsRange();
-	const moviesFromThisDate = await Promise
-		.all(
-			releaseYears
-				.map(async releaseYear => {
-					/**
-					 * Add a bit of wait time to avoid hitting the rate limit.
-					 * We should be well within the boundaries, but just to make sure. The
-					 * application is not time-critical.
-					 *
-					 * @see https://developer.themoviedb.org/docs/rate-limiting
-					 */
-					await new Promise(resolve => setTimeout(resolve, 500));
+for (const releaseYear of getYearsRange()) {
+	try {
+		/**
+		 * The Movie Database API does not have a method to request movies
+		 * released on a particular day so we have to specify a range.
+		 * If we're interested in movies released on a specific day, we need
+		 * to specify the day before and after.
+		 */
+		const dayBefore = getAdjacentDayInYear({
+			date: new Date(),
+			direction: 'previous',
+			year: releaseYear,
+		});
+		const dayAfter = getAdjacentDayInYear({
+			date: new Date(),
+			direction: 'next',
+			year: releaseYear,
+		});
 
-					/**
-					 * The Movie Database API does not have a method to request movies
-					 * released on a particular day so we have to specify a range.
-					 * If we're interested in movies released on a specific day, we need
-					 * to specify the day before and after.
-					 */
-					const dayBefore = getAdjacentDayInYear({
-						date: new Date(),
-						direction: 'previous',
-						year: releaseYear,
-					});
-					const dayAfter = getAdjacentDayInYear({
-						date: new Date(),
-						direction: 'next',
-						year: releaseYear,
-					});
+		/**
+		 * Get an array of movies released on today's month and day for the
+		 * current release year.
+		 */
+		const discoverResponse = await getDiscoverMovie({
+			'primary_release_date.gte': dayBefore,
+			'primary_release_date.lte': dayAfter,
+			'sort_by': 'popularity.desc',
+			'with_runtime.gte': '80',
+			'without_genres': '99', // Exclude documentaries
+		});
 
-					/**
-					 * Get an array of movies released on today's month and day for the
-					 * current release year.
-					 */
-					const discoverResponse = await getDiscoverMovie({
-						'primary_release_date.gte': dayBefore,
-						'primary_release_date.lte': dayAfter,
-						'sort_by': 'popularity.desc',
-						'with_runtime.gte': '60',
-						'without_genres': '99', // Exclude documentaries
-					});
+		appLogger.info({
+			message: `Got ${discoverResponse.results.length} movies for ${releaseYear}.`,
+			service: 'tmdb',
+		});
 
-					return discoverResponse.results;
-				}),
-		);
-	allMovies = moviesFromThisDate.flat();
-} catch (error) {
-	appLogger.error({
-		error,
-		message: 'Failed to get best movie from Movie Database.',
-		service: 'tmdb',
-	});
-	process.exit(1);
+		allMovies = [...allMovies, ...discoverResponse.results];
+	} catch (error) {
+		appLogger.error({
+			error,
+			message: `Failed to get movies for ${releaseYear}.`,
+			service: 'tmdb',
+		});
+
+		process.exit(1);
+	}
 }
 
 bestMovie = getBestMovieByDate(
