@@ -1,10 +1,10 @@
-import * as process from 'node:process';
 import {
 	type DiscoverMovieSearchParams,
 	type MovieDbClientParams,
 	type PaginatedMovies,
 	paginatedMoviesSchema,
-} from '../types/moviedb.js';
+} from '@/types/moviedb.js';
+import * as process from 'node:process';
 
 /**
  * Endpoint wrapper for the Movie Database API

@@ -1,5 +1,5 @@
+import { type Movie } from '@/types/moviedb.js';
 import { format } from 'date-fns';
-import { type Movie } from '../../types/moviedb.js';
 
 export function getMovieInfo({
 	id,

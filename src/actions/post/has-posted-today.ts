@@ -1,5 +1,5 @@
+import { Status } from '@/types/mastodon.js';
 import { differenceInHours } from 'date-fns';
-import { Status } from '../../types/mastodon.js';
 
 /**
  * Check if the last post was made today.
