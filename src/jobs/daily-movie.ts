@@ -115,13 +115,14 @@ const status = getMovieInfo(bestMovie);
  */
 let statusAttachment: MediaAttachment | null = null;
 let remotePoster: Response;
+const remotePosterUrl = `https://image.tmdb.org/t/p/original/${bestMovie.poster_path}`;
 
 try {
-	remotePoster = await fetch(`https://image.tmdb.org/t/p/original/${bestMovie.poster_path}`);
+	remotePoster = await fetch(remotePosterUrl);
 } catch (error) {
 	appLogger.error({
 		error,
-		message: 'Failed to fetch movie poster.',
+		message: `Failed to fetch movie poster ${remotePosterUrl} .`,
 		service: 'tmdb',
 	});
 	process.exit(1);
