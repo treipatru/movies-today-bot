@@ -33,6 +33,13 @@ const logFileTransport = new transports.DailyRotateFile({
 	maxFiles: '30d',
 });
 
+const consoleTransport = new transports.Console({
+	format: format.combine(
+		format.timestamp(),
+		format.prettyPrint(),
+	),
+});
+
 export const appLogger = createLogger({
 	level: 'info',
 	format: format.combine(
@@ -43,16 +50,6 @@ export const appLogger = createLogger({
 	transports: [
 		errorFileTransport,
 		logFileTransport,
+		consoleTransport,
 	],
 });
-
-if (process.env.NODE_ENV !== 'production') {
-	appLogger.add(
-		new transports.Console({
-			format: format.combine(
-				format.timestamp(),
-				format.prettyPrint(),
-			),
-		}),
-	);
-}
