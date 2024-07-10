@@ -1,35 +1,100 @@
-import { getBestMovie } from '@/actions/movie/get-best-movie.js';
+import { getBestMovieByDate } from '@/actions/movie/get-best-movie.js';
 import { generateMovie } from '@/fakers/moviedb.js';
 
+/**
+ * Get a new date with a random year but same month and day.
+ *
+ * @return {*}
+ */
+function getReleaseDateWithRandomYear() {
+	return new Date(
+		Math.floor(Math.random() * (2024 - 1950) + 1950),
+		0,
+		31,
+	);
+}
+
+/**
+ * Generate a list of movies and a best movie.
+ *
+ * @return {*}
+ */
+function generateMovies() {
+	/**
+	 * Generate a lot of random movies with same release day and month
+	 * but different years.
+	 */
+	const movies = Array.from(
+		{ length: 100 },
+		() =>
+			generateMovie({
+				maxPopularity: 5000,
+				releaseDate: getReleaseDateWithRandomYear(),
+			}),
+	);
+
+	/**
+	 * Create our star production with a higher popularity.
+	 */
+	const bestMovie = generateMovie({
+		minPopularity: 6000,
+		releaseDate: getReleaseDateWithRandomYear(),
+	});
+
+	return {
+		movies,
+		bestMovie,
+	};
+}
+
 test('should return the best movie of the day', () => {
-	const today = new Date();
-	const mmDD = `${today.getMonth() + 1}-${today.getDate()}`;
+	const { movies, bestMovie } = generateMovies();
 
-	const movies = [
-		generateMovie({
-			releaseDate: new Date(`1958-${mmDD}`),
-			minPopularity: 10,
-			maxPopularity: 20,
-		}),
-		generateMovie({
-			releaseDate: new Date(`1979-${mmDD}`),
-			minPopularity: 40,
-			maxPopularity: 90,
-		}),
-		generateMovie({
-			releaseDate: new Date(`1999-${mmDD}`),
-			minPopularity: 2300,
-			maxPopularity: 5000,
-		}),
-		generateMovie({
-			releaseDate: new Date(`2020-04-05`),
-			minPopularity: 6000,
-			maxPopularity: 9999,
-		}),
-	];
+	/**
+	 * Make sure best movie has a poster image.
+	 */
+	bestMovie.poster_path = '/example.jpg';
 
-	const result = getBestMovie(movies);
-	const expected = movies[2];
+	const result = getBestMovieByDate(
+		[...movies, bestMovie],
+		getReleaseDateWithRandomYear(),
+	);
 
-	expect(result).toEqual(expected);
+	expect(result).toBe(bestMovie);
+});
+
+test('should ignore movies without a poster image', () => {
+	const { movies, bestMovie } = generateMovies();
+
+	/**
+	 * Make sure best movie does not have a poster image.
+	 */
+	bestMovie.poster_path = null;
+
+	const result = getBestMovieByDate(
+		[...movies, bestMovie],
+		new Date(2024, 0, 31),
+	);
+
+	expect(result).not.toBe(bestMovie);
+});
+
+test('should ignore movies with a different release date', () => {
+	const { movies, bestMovie } = generateMovies();
+
+	/**
+	 * Set a different release date for the best movie.
+	 */
+	bestMovie.release_date = '2024-02-31';
+
+	const result = getBestMovieByDate(
+		[...movies, bestMovie],
+		new Date(2024, 0, 31),
+	);
+
+	expect(result).not.toBe(bestMovie);
+});
+
+test('should throw an error if no movies are found', () => {
+	expect(() => getBestMovieByDate([], new Date())).toThrowError();
 });
