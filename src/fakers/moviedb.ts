@@ -30,10 +30,7 @@ export function generateMovie({
 	maxPopularity,
 	minPopularity,
 	releaseDate,
-}: GenerateMovieOptions = {
-	maxPopularity: 9999.999,
-	minPopularity: 0.001,
-}): Movie {
+}: GenerateMovieOptions = {}): Movie {
 	const releasedOn = releaseDate || faker.date.between({ from: '1950-01-01', to: '2023-12-31' });
 	const hasPosterPath = faker.datatype.boolean();
 
@@ -60,8 +57,8 @@ export function generateMovie({
 		popularity: faker
 			.number
 			.float({
-				max: maxPopularity,
-				min: minPopularity,
+				max: maxPopularity || 9999.999,
+				min: minPopularity || 0.001,
 				multipleOf: 0.001,
 			}),
 		poster_path: hasPosterPath ? '/poster-example.jpg' : null,
