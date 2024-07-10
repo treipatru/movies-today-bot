@@ -14,15 +14,23 @@ const YEARS_LENGTH = process.env.NODE_ENV === 'development'
 	: new Date().getFullYear() - 1950;
 
 /**
- * Generate an array of years from 1950 to the previous year.
+ * Generate an array of years.
+ * If no params are specified it returns all years from 1950 to the
+ * previous year.
+ *
  * If the environment is development, return only 10 years.
  *
  * @export
- * @return {number[]} An array of years
+ * @param {number} [first=START_YEAR]
+ * @param {number} [last=START_YEAR + YEARS_LENGTH - 1]
+ * @return {*}  {number[]}
  */
-export function getYearsRange(): number[] {
+export function getYearsRange(
+	first: number = START_YEAR,
+	last: number = START_YEAR + YEARS_LENGTH - 1,
+): number[] {
 	return Array.from(
-		{ length: YEARS_LENGTH },
-		(_, i) => i + START_YEAR,
+		{ length: last - first + 1 },
+		(_, index) => first + index,
 	);
 }

@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { getFormattedDate } from '@/utils/get-formatted-date.js';
 
 type AdjacentYear = 'previous' | 'next';
 
@@ -12,12 +12,14 @@ type AdjacentYear = 'previous' | 'next';
 export function getAdjacentYearDate(year: number, direction: AdjacentYear) {
 	const date = new Date();
 
-	if (direction === 'previous') {
-		date.setDate(date.getDate() - 1);
-		date.setFullYear(year);
-	} else {
-		date.setDate(date.getDate() + 1);
+	switch (direction) {
+		case 'previous':
+			date.setFullYear(year - 1);
+			break;
+		case 'next':
+			date.setFullYear(year + 1);
+			break;
 	}
 
-	return format(date, 'yyyy-MM-dd');
+	return getFormattedDate(date);
 }

@@ -11,12 +11,12 @@ export function getMovieInfo({
 	 * Format the date to a more pleasant format.
 	 * @see https://date-fns.org/v3.6.0/docs/format
 	 */
-	const formattedDate = format(new Date(release_date), 'PPP');
+	const releaseDate = format(new Date(release_date), 'PPP');
 
 	const movieUrl = `https://www.themoviedb.org/movie/${id}`;
 
 	return `\n
-		${title} (${formattedDate})\n
+		${title} (${releaseDate})\n
 		${overview} \n
 		${movieUrl} \n
 		#movie #film #cinema
