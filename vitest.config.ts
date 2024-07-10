@@ -8,6 +8,13 @@ export default defineConfig({
 		alias: {
 			'@/': new URL('./src/', import.meta.url).pathname,
 		},
+		coverage: {
+			provider: 'istanbul',
+			exclude: [
+				'src/fakers/*.*',
+				'dist/**/*.*',
+			],
+		},
 		globals: true,
 	},
 });
