@@ -1,4 +1,5 @@
 import { type Movie } from '@/types/moviedb.js';
+import { appLogger } from '@/utils/logger.js';
 import { getDate, getMonth } from 'date-fns';
 
 /**
@@ -31,6 +32,10 @@ export function getBestMovieByDate(movies: Movie[], date: Date): Movie {
 		.filter(movie => movie.poster_path !== null);
 
 	if (filteredMovies.length === 0) {
+		appLogger.error({
+			message: 'No movies found for today.',
+			service: 'system',
+		});
 		throw new Error('No movies found for today.');
 	}
 
