@@ -1,4 +1,4 @@
-name: p34rev
+name: sanity-check
 
 on:
   push:
