@@ -1,0 +1,33 @@
+services:
+  bot-dev:
+    build:
+      context: .
+      target: movies-today-bot-dev
+    container_name: movies-today-bot-dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - .node_modules/
+        - action: rebuild
+          path: package.json
+    environment:
+        - NODE_ENV=development
+    env_file:
+      - .env.development
+    profiles:
+      - development
+
+  bot-prod:
+    build:
+      context: .
+      target: movies-today-bot-prod
+    container_name: movies-today-bot-prod
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.production
+    profiles:
+      - production
