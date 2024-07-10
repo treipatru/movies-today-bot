@@ -16,7 +16,7 @@ export function getMovieInfo({
 	const movieUrl = `https://www.themoviedb.org/movie/${id}`;
 
 	return `\n
-		${title} {${formattedDate}}\n
+		${title} (${formattedDate})\n
 		${overview} \n
 		${movieUrl} \n
 		#movie #film #cinema
