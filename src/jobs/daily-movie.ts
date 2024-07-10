@@ -59,6 +59,15 @@ try {
 			releaseYears
 				.map(async releaseYear => {
 					/**
+					 * Add a bit of wait time to avoid hitting the rate limit.
+					 * We should be well within the boundaries, but just to make sure. The
+					 * application is not time-critical.
+					 *
+					 * @see https://developer.themoviedb.org/docs/rate-limiting
+					 */
+					await new Promise(resolve => setTimeout(resolve, 500));
+
+					/**
 					 * The Movie Database API does not have a method to request movies
 					 * released on a particular day so we have to specify a range.
 					 * If we're interested in movies released on a specific day, we need
