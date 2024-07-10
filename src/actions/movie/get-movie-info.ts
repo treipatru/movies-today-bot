@@ -7,18 +7,10 @@ export function getMovieInfo({
 	release_date,
 	title,
 }: Movie) {
-	/**
-	 * Format the date to a more pleasant format.
-	 * @see https://date-fns.org/v3.6.0/docs/format
-	 */
-	const releaseDate = format(new Date(release_date), 'PPP');
+	const line1 = `${title} (${format(new Date(release_date), 'PPP')})`;
+	const line2 = overview;
+	const line3 = `https://www.themoviedb.org/movie/${id}`;
+	const line4 = '#movie #film #cinema';
 
-	const movieUrl = `https://www.themoviedb.org/movie/${id}`;
-
-	return `\n
-		${title} (${releaseDate})\n
-		${overview} \n
-		${movieUrl} \n
-		#movie #film #cinema
-	`;
+	return `${line1}\n\n${line2}\n${line3}\n\n${line4}`;
 }
