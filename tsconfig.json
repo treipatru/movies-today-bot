@@ -1,7 +1,10 @@
 {
 	"extends": "@tsconfig/node20/tsconfig.json",
 	"compilerOptions": {
-		"outDir": "dist"
+		"outDir": "dist",
+		"types": [
+			"vitest/globals"
+		]
 	},
 	"include": [
 		"src/**/*.ts"
