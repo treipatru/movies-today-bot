@@ -51,7 +51,7 @@ export function generateMovie({
 		}),
 		overview: faker.lorem.paragraph({
 			min: 1,
-			max: 3,
+			max: 10,
 		}),
 		popularity: faker.number.float({
 			max: maxPopularity || 9999.999,
