@@ -4,7 +4,6 @@ type Direction = 'previous' | 'next';
 
 /**
  * Using a given date, get the adjacent day in a specified year.
- * Easily get Useful for getting yesterday's or tomorrow's date in a specific year.
  *
  * TODO: Take leap years into consideration.
  * Individual months have the same length in days every year.
