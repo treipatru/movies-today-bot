@@ -8,7 +8,14 @@ export function getMovieInfo({
 	title,
 }: Movie) {
 	const line1 = `${title} (${format(new Date(release_date), 'PPP')})`;
-	const line2 = overview;
+	/**
+	 * Mastodon has a DEFAULT character limit of 500. It can be changed per
+	 * instance.
+	 *
+	 * There is no 'short' version of the overview in the API so we have to
+	 * approximate a max length for it.
+	 */
+	const line2 = overview.substring(0, 350);
 	const line3 = `https://www.themoviedb.org/movie/${id}`;
 	const line4 = '#movie #film #cinema';
 

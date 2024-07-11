@@ -14,3 +14,11 @@ test('should return the movie info', () => {
 	expect(result).toContain(movieUrl);
 	expect(result).toContain('#movie #film #cinema');
 });
+
+test('should trim the overview to 350 characters', () => {
+	const movie = generateMovie();
+	movie.overview = 'a'.repeat(500);
+
+	const result = getMovieInfo(movie);
+	expect(result).toContain('a'.repeat(350));
+});
