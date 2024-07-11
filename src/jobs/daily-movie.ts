@@ -1,18 +1,18 @@
-import { MediaAttachment } from '@/types/mastodon.js';
-import { Movie } from '@/types/moviedb.js';
-import { appLogger } from '@/utils/logger.js';
-import process from 'node:process';
-import { getAdjacentDayInYear } from '../actions/movie/get-adjacent-year-date.js';
-import { getBestMovieByDate } from '../actions/movie/get-best-movie.js';
-import { getMovieInfo } from '../actions/movie/get-movie-info.js';
-import { getYearsRange } from '../actions/movie/get-years-range.js';
-import { hasPostedToday } from '../actions/post/has-posted-today.js';
+import { getAdjacentDayInYear } from '@/actions/movie/get-adjacent-year-date.js';
+import { getBestMovieByDate } from '@/actions/movie/get-best-movie.js';
+import { getMovieInfo } from '@/actions/movie/get-movie-info.js';
+import { getYearsRange } from '@/actions/movie/get-years-range.js';
+import { hasPostedToday } from '@/actions/post/has-posted-today.js';
 import {
 	createMedia,
 	createStatus,
 	getTimeline,
-} from '../api/mastodon.js';
-import { getDiscoverMovie } from '../api/moviedb.js';
+} from '@/api/mastodon.js';
+import { getDiscoverMovie } from '@/api/moviedb.js';
+import { MediaAttachment } from '@/types/mastodon.js';
+import { Movie } from '@/types/moviedb.js';
+import { appLogger } from '@/utils/logger.js';
+import process from 'node:process';
 
 appLogger.info({
 	message: 'Starting daily movie job.',
