@@ -105,6 +105,11 @@ bestMovie = getBestMovieByDate(
 	new Date(),
 );
 
+appLogger.info({
+	message: `Picked best movie - ${bestMovie.title} (${bestMovie.release_date}).`,
+	service: 'system',
+});
+
 /**
  * Create a status (text) to post on Mastodon.
  */
@@ -119,6 +124,11 @@ const remotePosterUrl = `https://image.tmdb.org/t/p/original/${bestMovie.poster_
 
 try {
 	remotePoster = await fetch(remotePosterUrl);
+
+	appLogger.info({
+		message: `Fetched movie poster ${remotePosterUrl}.`,
+		service: 'tmdb',
+	});
 } catch (error) {
 	appLogger.error({
 		error,
