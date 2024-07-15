@@ -33,12 +33,7 @@ const logFileTransport = new transports.DailyRotateFile({
 	maxFiles: '30d',
 });
 
-const consoleTransport = new transports.Console({
-	format: format.combine(
-		format.timestamp(),
-		format.prettyPrint(),
-	),
-});
+const consoleTransport = new transports.Console();
 
 export const appLogger = createLogger({
 	level: 'info',
@@ -50,6 +45,6 @@ export const appLogger = createLogger({
 	transports: [
 		errorFileTransport,
 		logFileTransport,
-		consoleTransport,
+		...process.env.NODE_ENV === 'test' ? [] : [consoleTransport],
 	],
 });
