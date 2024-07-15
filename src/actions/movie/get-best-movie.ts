@@ -48,5 +48,10 @@ export function getBestMovieByDate(movies: Movie[], date: Date): Movie {
 			return (current.popularity > prev.popularity) ? current : prev;
 		});
 
+	appLogger.info({
+		message: `Picked best movie - ${bestMovie.title} (${bestMovie.release_date}).`,
+		service: 'system',
+	});
+
 	return bestMovie;
 }
