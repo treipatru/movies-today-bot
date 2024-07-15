@@ -46,7 +46,7 @@ export async function getDiscoverMovie(
 	searchParams: DiscoverMovieSearchParams = {},
 ): Promise<PaginatedMovies> {
 	const response = await movieDbClient({
-		endpoint: '/discover/movie',
+		endpoint: '/3/discover/movie',
 		method: 'GET',
 		searchParams: new URLSearchParams(searchParams),
 	});
