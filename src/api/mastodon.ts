@@ -14,16 +14,34 @@ const mastodonClient = createRestAPIClient({
 // ==============================
 // Mastodon API endpoints
 
+/**
+ * Create a new media attachment
+ *
+ * @see https://docs.joinmastodon.org/methods/media/#create
+ */
 export const createMedia = mastodonClient
-	.v2
+	.v1
 	.media
 	.create;
 
+/**
+ * Create a new status
+ * Mastodon API endpoint: POST /api/v1/statuses
+ *
+ * @see https://docs.joinmastodon.org/methods/statuses/#create
+ */
 export const createStatus = mastodonClient
 	.v1
 	.statuses
 	.create;
 
+/**
+ * Get the home timeline
+ *
+ * @see https://docs.joinmastodon.org/methods/timelines/
+ */
 export const getTimeline = mastodonClient
 	.v1
-	.timelines;
+	.timelines
+	.home
+	.list;
