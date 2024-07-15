@@ -11,8 +11,10 @@ export default defineConfig({
 		coverage: {
 			provider: 'istanbul',
 			exclude: [
-				'src/fakers/*.*',
 				'dist/**/*.*',
+				'src/**/*.spec.ts',
+				'src/test/**/*.*',
+				'src/types/*.*',
 			],
 		},
 		globals: true,
