@@ -26,12 +26,12 @@ const YEARS_LENGTH = process.env.NODE_ENV === 'development'
  *
  * @export
  * @param {number} [first=START_YEAR]
- * @param {number} [last=START_YEAR + YEARS_LENGTH - 1]
+ * @param {number} [last=START_YEAR + YEARS_LENGTH]
  * @return {*}  {number[]}
  */
 export function getYearsRange(
 	first: number = START_YEAR,
-	last: number = START_YEAR + YEARS_LENGTH - 1,
+	last: number = START_YEAR + YEARS_LENGTH,
 ): number[] {
 	return Array.from(
 		{ length: last - first + 1 },
