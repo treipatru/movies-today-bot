@@ -1,5 +1,5 @@
 import { hasPostedToday } from '@/actions/post/has-posted-today.js';
-import { generateStatus } from '@/fakers/mastodon.js';
+import { generateStatus } from '@/test/fakers/mastodon.js';
 import { sub } from 'date-fns';
 
 test('should return true if last post is from less than 24h ago', () => {
