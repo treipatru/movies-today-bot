@@ -11,7 +11,11 @@ const START_YEAR = process.env.NODE_ENV === 'development'
 
 const YEARS_LENGTH = process.env.NODE_ENV === 'development'
 	? 10
-	: new Date().getFullYear() - 1950;
+	: (new Date().getFullYear() - 10) - 1950;
+/**
+ * ^ Don't show movies from the last 10 years as they are too recent.
+ * TODO: Improve the movie picking algorithm to allow year bias instead.
+ */
 
 /**
  * Generate an array of years.
