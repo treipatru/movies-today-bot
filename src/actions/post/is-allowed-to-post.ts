@@ -21,5 +21,5 @@ export function isAllowedToPost(posts: Status[]): boolean {
 	const now = new Date();
 	const hoursDiff = differenceInHours(now, posts[0].createdAt);
 
-	return hoursDiff < 24;
+	return hoursDiff < 23;
 }
