@@ -45,7 +45,10 @@ const bestMovie = getBestMovieByDate(
  * If we are in development mode, log the movie and exit.
  */
 if (process.env.NODE_ENV === 'development') {
-	console.log(bestMovie);
+	appLogger.info({
+		message: 'In dev mode, aborting post.',
+		service: 'system',
+	});
 	process.exit(0);
 }
 
