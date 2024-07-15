@@ -1,5 +1,5 @@
 import { getBestMovieByDate } from '@/actions/movie/get-best-movie.js';
-import { generateMovie } from '@/fakers/moviedb.js';
+import { generateMovie } from '@/test/fakers/moviedb.js';
 
 /**
  * Get a new date with a random year but same month and day.

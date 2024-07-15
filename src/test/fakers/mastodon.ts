@@ -1,4 +1,4 @@
-import { Status } from '@/types/mastodon.js';
+import { MediaAttachment, Status } from '@/types/mastodon.js';
 import { faker } from '@faker-js/faker';
 
 function generateAccount(): Status['account'] {
@@ -57,5 +57,16 @@ export function generateStatus({
 		visibility: faker
 			.helpers
 			.arrayElement(['public', 'unlisted', 'private', 'direct']),
+	};
+}
+
+export function generateMediaAttachment(): MediaAttachment {
+	return {
+		description: faker.lorem.sentence(),
+		id: faker.number.int().toString(),
+		previewUrl: faker.image.url(),
+		textUrl: faker.internet.url(),
+		type: faker.helpers.arrayElement(['image', 'video']),
+		url: faker.image.url(),
 	};
 }

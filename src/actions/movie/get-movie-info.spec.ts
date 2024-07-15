@@ -2,7 +2,7 @@ import {
 	getMovieInfo,
 	getMovieOverview,
 } from '@/actions/movie/get-movie-info.js';
-import { generateMovie } from '@/fakers/moviedb.js';
+import { generateMovie } from '@/test/fakers/moviedb.js';
 
 describe('getMovieOverview', () => {
 	test('should return the overview if it is less than 350 characters', () => {
