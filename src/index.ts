@@ -18,7 +18,7 @@ const bree = new Bree({
 		{
 			name: 'daily-movie',
 			timeout: '10s',
-			cron: '0 15 * * *',
+			interval: 'at 11:00 am',
 		},
 	],
 
