@@ -52,7 +52,12 @@ export async function getDiscoverMovie(
 	});
 
 	const resJSON = await response.json();
-	const data = paginatedMoviesSchema.parse(resJSON);
+	const { data, error } = paginatedMoviesSchema.safeParse(resJSON);
+
+	if (error) {
+		console.log(error.flatten());
+		throw new Error('Failed to parse response from MovieDB API');
+	}
 
 	return data;
 }
